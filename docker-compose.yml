@@ -43,6 +43,22 @@ services:
     depends_on:
       - zookeeper
 
+  mongo:
+    image: mongo
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+    ports:
+      - '27017:27017'
+    volumes:
+      - mongodb:./mongo
+    
+  store:
+    image: store:0.0.1
+    ports:
+      - "6381:6381"
+
 volumes:
   zookeeper_data:
     driver: local
