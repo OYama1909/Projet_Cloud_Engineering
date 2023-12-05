@@ -28,8 +28,8 @@ services:
     ports:
       - '27017:27017'
     volumes:
-      - mongodb:./mongo
-    
+      - mongodb_data:/data/db
+
   store:
     image: store:0.0.1
     ports:
@@ -38,4 +38,4 @@ services:
 volumes:
   kafka_data:
     driver: local
-  mongodb:
+  mongodb_data:
