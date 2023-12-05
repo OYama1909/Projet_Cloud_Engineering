@@ -36,8 +36,6 @@ services:
       - "6381:6381"
 
 volumes:
-  zookeeper_data:
-    driver: local
   kafka_data:
     driver: local
   mongodb:
