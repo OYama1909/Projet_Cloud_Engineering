@@ -1,9 +1,11 @@
 from fastapi import FastAPI
 from random import choice
-from operator import getitem
-from functools import partial
+from pymongo import MongoClient
+
 
 app = FastAPI()
+client = MongoClient("mongodb://root:example@mongo")
+db = client["Stores"]
 
 #Products are identified by name, so there cannot be two products with the same
 #name !
@@ -21,6 +23,7 @@ store = choice(stores)
 store_checkouts = [checkout for checkout in checkouts if checkout["_id"] in store["checkouts"]]
 store_sellers = [seller for seller in sellers if seller["_id"] in store["sellers"]]
 basket = {}
+
 
 @app.get("/")
 async def add_to_basket(product_name: str, quantity: int):
@@ -52,4 +55,5 @@ async def validate_basket():
     """
     Validates the basket and sends the receipt.
     """
-    return {"store_id": store["_id"], "checkout_id": choice(store_checkouts)["_id"], "seller_id": choice(store_sellers)["_id"], "basket": basket, "total_price": sum(product["price"] for product in basket.values())}
+    client["Stores"]["Receipts"].insert_one({"store_id": store["_id"], "checkout_id": choice(store_checkouts)["_id"], "seller_id": choice(store_sellers)["_id"], "basket": basket, "total_price": sum(product["price"] for product in basket.values())})
+    return "The basket is validated and the receipt has been added to the database."

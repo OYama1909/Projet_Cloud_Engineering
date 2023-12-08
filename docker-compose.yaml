@@ -33,7 +33,10 @@ services:
   store:
     image: store:0.0.1
     ports:
+      - "80:80"
       - "6381:6381"
+    depends_on:
+      - mongo
 
 volumes:
   kafka_data:
