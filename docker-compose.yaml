@@ -29,11 +29,21 @@ services:
       - '27017:27017'
     volumes:
       - mongodb_data:/data/db
+  
+  producer:
+    image: thibautrv/producer:latest
+    depends_on:
+      - kafka
+
+  consumer:
+    image: thibautrv/consumer:latest
+    depends_on:
+      - kafka
 
   store:
-    image: store:0.0.1
+    image:  thibautrv/store:latest
     ports:
-      - "80:80"
+      - "82:80"
       - "6381:6381"
     depends_on:
       - mongo

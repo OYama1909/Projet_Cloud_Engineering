@@ -1,2 +1,2 @@
-confluent_kafka
-flask
+kafka-python==2.0.2
+flask   
