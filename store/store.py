@@ -5,6 +5,9 @@ import json
 
 app = FastAPI()
 
+bootstrap_servers = 'kafka:9092'
+producer = KafkaProducer(bootstrap_servers=bootstrap_servers, value_serializer=lambda v: json.dumps(v).encode('utf-8'))
+
 # The list of stores
 stores = [{"_id": 1, "stock": {"Apple": 50, "Orange": 30, "Bottle of water": 20}, "checkouts": [1, 2],
            "sellers": [1, 2]}]
@@ -60,13 +63,15 @@ async def validate_basket():
     seller = choice(store_sellers)
 
     # Insert the receipt corresponding to the basket in the collection "Receipts" of the database db
-    db["Receipts"].insert_one({
-        "store_id": store["_id"],
-        "checkout_id": checkout["_id"],
-        "seller_id": seller["_id"],
-        "basket": basket,
-        "total_price": sum(product["price"] for product in basket.values())
-    })
+    producer.send("tickets",
+    		  value={
+    		  	"store_id": store["_id"],
+    		  	"checkout_id": checkout["_id"],
+    		  	"seller_id": seller["_id"],
+    		  	"basket": basket,
+    		  	"total_price": sum(product["price"] for product in basket.values())
+    		  	}
+    		  )
 
     # Indicate that the basket was effectively validated
     return "The basket is validated, and the receipt has been added to the database."
