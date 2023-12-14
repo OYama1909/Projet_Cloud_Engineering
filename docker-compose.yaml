@@ -28,7 +28,7 @@ services:
     ports:
       - '27017:27017'
     volumes:
-      - mongodb_data:/data/db
+       mongodb_data:/data/db
   
   producer:
     image: thibautrv/producer:latest
@@ -47,8 +47,3 @@ services:
       - "6381:6381"
     depends_on:
       - mongo
-
-volumes:
-  kafka_data:
-    driver: local
-  mongodb_data:
